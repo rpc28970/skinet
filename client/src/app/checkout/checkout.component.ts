@@ -23,6 +23,7 @@ export class CheckoutComponent implements OnInit {
   ngOnInit(): void {
     this.createCheckoutForm();
     this.getAddressFormValues();
+    this.getDeliveryMethodValues();
     this.basketTotals$ = this.basketService.basketTotals$;
   }
 
@@ -49,10 +50,17 @@ export class CheckoutComponent implements OnInit {
     this.accountService.getUserAddress().subscribe({
       next: address => {if (address) {
         this.checkoutForm.get('addressForm').patchValue(address);
-        this.checkoutForm.get('addressForm.zipcode').patchValue(address.zipCode)
+        this.checkoutForm.get('addressForm.zipcode').patchValue(address.zipCode);
       }},
       error: error => console.log(error)
     });
+  }
+
+  getDeliveryMethodValues() {
+    const basket = this.basketService.getCurrentBasketValue();
+    if(basket.deliveryMethodId !== null) {
+      this.checkoutForm.get('deliveryForm').get('deliveryMethod').patchValue(basket.deliveryMethodId.toString());
+    }
   }
 
 }
